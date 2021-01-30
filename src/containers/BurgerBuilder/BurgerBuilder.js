@@ -5,6 +5,7 @@ class BurgerBuilder extends Component {
         return (
             <>
                 <div>Burger</div>
+                <div>Build Controls</div>
             </>
         )
     }
