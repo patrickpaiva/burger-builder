@@ -14,12 +14,31 @@ import * as actionTypes from '../../store/actions'
 
 class BurgerBuilder extends Component {
     state = {
-        purchasable: false,
         purchasing: false,
         loading: false,
         error: false
     }
 
+    updatePurchaseState(ingredients) {
+        const sum = Object.values(ingredients)
+            .reduce((accumulator, currentValue) => {
+                return accumulator + currentValue
+            }, 0)
+
+         return sum > 0
+    }
+
+    purchaseHandler = () => {
+        this.setState({ purchasing: true })
+    }
+
+    purchaseCancelHandler = () => {
+        this.setState({ purchasing: false })
+    }
+
+    purchaseContinueHandler = () => {
+        this.props.history.push('/checkout')
+    }
     // componentDidMount() {
     //     axios.get('https://burger-builder-97aaf-default-rtdb.firebaseio.com/ingredients.json')
     //         .then(response => {
@@ -31,22 +50,6 @@ class BurgerBuilder extends Component {
     //         }) 
     // }
 
-    updatePurchaseState(ingredients) {
-        // const sum = Object.keys(ingredients)
-        //     .map(igKey => {
-        //         return ingredients[igKey]
-        //     })
-        //     .reduce((accumulator, currentValue) => {
-        //         return accumulator + currentValue
-        //     }, 0)
-
-        const sum = Object.values(ingredients)
-            .reduce((accumulator, currentValue) => {
-                return accumulator + currentValue
-            }, 0)
-
-        this.setState({ purchasable: sum > 0 })
-    }
 
     // addIngredientHandler = (type) => {
     //     const oldCount = this.state.ingredients[type]
@@ -80,52 +83,6 @@ class BurgerBuilder extends Component {
     //     this.updatePurchaseState(updatedIngredients)
     // }
 
-    purchaseHandler = () => {
-        this.setState({ purchasing: true })
-    }
-
-    purchaseCancelHandler = () => {
-        this.setState({ purchasing: false })
-    }
-
-    purchaseContinueHandler = () => {
-        // alert('You continue!')
-        // this.setState({ loading: true })
-        // const order = {
-        //     ingredients: this.state.ingredients,
-        //     price: this.state.totalPrice,
-        //     customer: {
-        //         name: 'Patrick',
-        //         address: {
-        //             street: 'Paia 1',
-        //             zipCode: '3123121',
-        //             country: 'Brazil'
-        //         },
-        //         email: 'teste@test.com'
-        //     },
-        //     deliveryMethod: 'fastest'
-        // }
-        // axios.post('/orders.json', order)
-        //     .then(response => {
-        //         this.setState({ loading: false, purchasing: false })
-        //         console.log(response)
-        //     })
-        //     .catch(error => {
-        //         this.setState({ loading: false, purchasing: false })
-        //         console.error(error)
-        //     })
-        const queryParams = []
-        for (let i in this.state.ingredients) {
-            queryParams.push(`${encodeURIComponent(i)}=${encodeURIComponent(this.state.ingredients[i])}`)
-        }
-        queryParams.push('price=' + this.state.totalPrice)
-        const queryString = queryParams.join('&')
-        
-        this.props.history.push({
-            pathname: '/checkout',
-            search: `?${queryString}`
-        })
-    }
 
     render() {
         const disableInfo = {
@@ -147,7 +104,7 @@ class BurgerBuilder extends Component {
                         ingredientAdded={this.props.onIngredientAdded}
                         ingredientRemoved={this.props.onIngredientRemoved}
                         disabled={disableInfo}
-                        purchasable={this.state.purchasable}
+                        purchasable={this.updatePurchaseState(this.props.ings)}
                         ordered={this.purchaseHandler}
                         price={this.props.price}
                     />
