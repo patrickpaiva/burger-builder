@@ -7,16 +7,13 @@ import Modal from '../../components/UI/Modal/Modal'
 import OrderSummary from '../../components/Burger/OrderSummary/OrderSummary'
 import Spinner from '../../components/UI/Spinner/Spinner'
 import WithErrorHandler from '../../hoc/withErrorHandler/withErrorHandler'
-import axios from '../../axios-orders'
 import * as burgerBuilderActions from '../../store/actions/index'
-
+import axios from '../../axios-orders'
 
 
 class BurgerBuilder extends Component {
     state = {
         purchasing: false,
-        loading: false,
-        error: false
     }
 
     updatePurchaseState(ingredients) {
@@ -39,16 +36,9 @@ class BurgerBuilder extends Component {
     purchaseContinueHandler = () => {
         this.props.history.push('/checkout')
     }
-    // componentDidMount() {
-    //     axios.get('https://burger-builder-97aaf-default-rtdb.firebaseio.com/ingredients.json')
-    //         .then(response => {
-    //             this.setState({ ingredients: response.data })
-    //         })
-    //         .catch(error => {
-    //             this.setState({error: true})
-    //             console.error(error)
-    //         }) 
-    // }
+    componentDidMount() {
+         this.props.onInitIngredients()
+    }
 
 
     // addIngredientHandler = (type) => {
@@ -94,7 +84,7 @@ class BurgerBuilder extends Component {
         }
 
         let orderSummary = null
-        let burger = this.state.error ? <p>Ingredients can't be loaded!</p> : <Spinner />
+        let burger = this.props.error ? <p>Ingredients can't be loaded!</p> : <Spinner />
 
         if (this.props.ings) {
             burger = (
@@ -117,10 +107,6 @@ class BurgerBuilder extends Component {
                 purchaseContinued={this.purchaseContinueHandler}
             />
         }
-        if (this.state.loading) {
-            orderSummary = <Spinner />
-        }
-
         return (
             <>
                 <Modal show={this.state.purchasing} modalClose={this.purchaseCancelHandler}>
@@ -135,7 +121,8 @@ class BurgerBuilder extends Component {
 const mapStateToProps = state => {
     return {
         ings: state.ingredients,
-        price: state.totalPrice
+        price: state.totalPrice,
+        error: state.error
     }
 }
 
@@ -143,6 +130,7 @@ const mapDispatchToProps = dispatch => {
     return {
         onIngredientAdded: (ingredientName) => dispatch(burgerBuilderActions.addIngredient(ingredientName)),
         onIngredientRemoved: (ingredientName) => dispatch(burgerBuilderActions.removeIngredient(ingredientName)),
+        onInitIngredients: () => dispatch(burgerBuilderActions.initIngredients())
     }
 }
 
