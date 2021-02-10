@@ -1,5 +1,5 @@
-import React , { Component } from 'react'
-import { Route, Switch } from 'react-router-dom'
+import React, { Component } from 'react'
+import { Route, Switch, Redirect } from 'react-router-dom'
 import { connect } from 'react-redux'
 
 import Layout from './hoc/Layout/Layout'
@@ -15,19 +15,40 @@ class App extends Component {
     this.props.onTryAutoSignup()
   }
   render() {
+    let routes = (
+      <>
+        <Route path="/auth" exact component={Auth} />
+        <Route path="/" exact component={BurgerBuilder} />
+        <Redirect to="/" />
+      </>
+    )
+
+    if (this.props.isAuthenticated) {
+      routes = (
+        <>
+          <Route path="/checkout" component={Checkout} />
+          <Route path="/orders" exact component={Orders} />
+          <Route path="/logout" exact component={Logout} />
+          <Route path="/" exact component={BurgerBuilder} />
+          <Redirect to="/" />
+        </>
+      )
+    }
     return (
       <div>
         <Layout>
           <Switch>
-            <Route path="/checkout" component={Checkout} />
-            <Route path="/orders" exact component={Orders} />
-            <Route path="/auth" exact component={Auth} />
-            <Route path="/logout" exact component={Logout} />
-            <Route path="/" exact component={BurgerBuilder} />
+            {routes}
           </Switch>
         </Layout>
       </div>
     )
+  }
+}
+
+const mapStateToProps = state => {
+  return {
+    isAuthenticated: state.auth.token !== null
   }
 }
 
@@ -37,4 +58,4 @@ const mapDispatchToProps = dispatch => {
   }
 }
 
-export default connect(null, mapDispatchToProps)(App)
+export default connect(mapStateToProps, mapDispatchToProps)(App)
