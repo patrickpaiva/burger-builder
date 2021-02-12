@@ -5,7 +5,10 @@ export {
     fetchOrders,
     purchaseBurgerStart,
     purchaseBurgerSuccess,
-    purchaseBurgerFail 
+    purchaseBurgerFail,
+    fecthOrdersStart,
+    fecthOrdersSuccess,
+    fecthOrdersFail 
 } from './order'
 export { 
     auth, 
