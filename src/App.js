@@ -1,4 +1,4 @@
-import React, { Component } from 'react'
+import React, { useEffect } from 'react'
 import { Route, Switch, Redirect } from 'react-router-dom'
 import { connect } from 'react-redux'
 
@@ -20,11 +20,11 @@ const asyncAuth = asyncComponent(() => {
   return import('./containers/Auth/Auth')
 })
 
-class App extends Component {
-  componentDidMount() {
-    this.props.onTryAutoSignup()
-  }
-  render() {
+const App = ({isAuthenticated, onTryAutoSignup}) => {
+  useEffect(() => {
+    onTryAutoSignup()
+  }, [onTryAutoSignup])
+
     let routes = (
       <>
         <Route path="/auth" exact component={asyncAuth} />
@@ -33,7 +33,7 @@ class App extends Component {
       </>
     )
 
-    if (this.props.isAuthenticated) {
+    if (isAuthenticated) {
       routes = (
         <>
           <Route path="/checkout" component={asyncCheckout} />
@@ -54,7 +54,7 @@ class App extends Component {
         </Layout>
       </div>
     )
-  }
+  
 }
 
 const mapStateToProps = state => {
