@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { connect } from 'react-redux'
+import { useSelector } from 'react-redux'
 
 import Aux from '../Auxi/Auxi'
 import Toolbar from '../../components/Navigation/Toolbar/Toolbar'
@@ -7,8 +7,12 @@ import SideDrawer from '../../components/Navigation/SideDrawer/SideDrawer'
 
 import classes from './Layout.module.css'
 
-const Layout = ({isAuthenticated, children, ...rest}) => {
+const Layout = ({children}) => {
     const [sideDrawerIsVisible, setSideDrawerIsVisible] = useState(false)
+
+    const { isAuthenticated } = useSelector(state => ({
+        isAuthenticated: state.auth.token !== null
+    }))
 
     const sideDrawerClosedHandler = () => {
         setSideDrawerIsVisible(false)
@@ -37,10 +41,4 @@ const Layout = ({isAuthenticated, children, ...rest}) => {
 
 }
 
-const mapStateToProps = state => {
-    return {
-        isAuthenticated: state.auth.token !== null
-    }
-}
-
-export default connect(mapStateToProps)(Layout)
+export default Layout
